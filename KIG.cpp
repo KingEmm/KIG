@@ -11,9 +11,6 @@
 //#include <ctime>
 
 ThreadSafeQueue queue;
-
-int bal;
-
 //void producerA()
 //{
 //    int i = 0;
@@ -46,35 +43,16 @@ int bal;
 //    }
 //}
 
-void sendFund(std::string student, int amt) {
-
-    if (bal > amt) {
-        bal -= amt;
-    }
-}
-
 int main()
 {
-    //std::thread req1(sendFund, "Emmanuel", 50);
-    //std::thread req2(sendFund, "Emmanuel", 50);
-    //std::thread req3(sendFund, "Emmanuel", 50);
-    //std::thread req4(sendFund, "Emmanuel", 50);
-
-
-    //req1.join();
-    //req2.join();
-    //req3.join();
-    //req4.join();
-    //std::cout << "Balance: " << bal;
-    //std::thread user1(sendFund, "Samuel", 50);
     //ProcessMonitor processMonitor(queue);
     //FileSystemMonitor fileSystemMonitor(queue);
     std::vector<std::unique_ptr<IMonitor>> monitors;
 
-    //monitors.emplace_back(std::make_unique<ProcessMonitor> (queue));
-    //monitors.emplace_back(std::make_unique<FileSystemMonitor> (queue));
+    monitors.emplace_back(std::make_unique<ProcessMonitor> (queue));
+    monitors.emplace_back(std::make_unique<FileSystemMonitor> (queue));
     //Software\\Microsoft\\Windows\\CurrentVersion\\Run
-    monitors.emplace_back(std::make_unique<RegMonitor> (queue, HKEY_CURRENT_USER, L"Software\\Opera Software"));
+    monitors.emplace_back(std::make_unique<RegMonitor> (queue, HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run"));
     ////monitors.emplace_back(std::make_unique<RegMonitor> (queue, HKEY_LOCAL_MACHINE, L"Software"));
     ////monitors.emplace_back(std::make_unique<RegMonitor> (queue, HKEY_CURRENT_CONFIG, L"Software"));
     ////monitors.emplace_back(std::make_unique<RegMonitor> (queue, HKEY_CLASSES_ROOT, L"Software"));
@@ -99,7 +77,7 @@ int main()
     std::this_thread::sleep_for(std::chrono::seconds(240));
 
     for(const auto& monitor : monitors) monitor->stop();
-    //pool.stop();
+    pool.stop();
     /*monitor.stop();
     Fmonitor.stop();*/
     return 0;
